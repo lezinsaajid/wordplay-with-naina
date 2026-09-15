@@ -161,7 +161,7 @@ function Talk() {
             onClick={handleMic}
             disabled={micDisabled}
             aria-label={micLabel}
-            className="relative grid size-44 place-items-center rounded-full bg-foreground text-background transition-transform duration-200 hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
+            className="relative flex size-44 flex-col items-center justify-center gap-4 rounded-full bg-foreground text-background transition-transform duration-200 hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
           >
             <span
               className={`size-3 rounded-full ${
@@ -170,7 +170,7 @@ function Talk() {
                   : "bg-background/40"
               }`}
             />
-            <span className="mt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-background/70">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-background/70">
               {micLabel}
             </span>
           </button>
