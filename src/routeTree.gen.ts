@@ -10,33 +10,79 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PracticeRouteImport } from './routes/practice'
+import { Route as WordsRouteImport } from './routes/words'
+import { Route as DoneMomentRouteImport } from './routes/done.$moment'
+import { Route as TalkMomentRouteImport } from './routes/talk.$moment'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PracticeRoute = PracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WordsRoute = WordsRouteImport.update({
+  id: '/words',
+  path: '/words',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoneMomentRoute = DoneMomentRouteImport.update({
+  id: '/done/$moment',
+  path: '/done/$moment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TalkMomentRoute = TalkMomentRouteImport.update({
+  id: '/talk/$moment',
+  path: '/talk/$moment',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/practice': typeof PracticeRoute
+  '/words': typeof WordsRoute
+  '/done/$moment': typeof DoneMomentRoute
+  '/talk/$moment': typeof TalkMomentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/practice': typeof PracticeRoute
+  '/words': typeof WordsRoute
+  '/done/$moment': typeof DoneMomentRoute
+  '/talk/$moment': typeof TalkMomentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/practice': typeof PracticeRoute
+  '/words': typeof WordsRoute
+  '/done/$moment': typeof DoneMomentRoute
+  '/talk/$moment': typeof TalkMomentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/practice' | '/words' | '/done/$moment' | '/talk/$moment'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/practice' | '/words' | '/done/$moment' | '/talk/$moment'
+  id:
+    | '__root__'
+    | '/'
+    | '/practice'
+    | '/words'
+    | '/done/$moment'
+    | '/talk/$moment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PracticeRoute: typeof PracticeRoute
+  WordsRoute: typeof WordsRoute
+  DoneMomentRoute: typeof DoneMomentRoute
+  TalkMomentRoute: typeof TalkMomentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +94,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/practice': {
+      id: '/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/words': {
+      id: '/words'
+      path: '/words'
+      fullPath: '/words'
+      preLoaderRoute: typeof WordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/done/$moment': {
+      id: '/done/$moment'
+      path: '/done/$moment'
+      fullPath: '/done/$moment'
+      preLoaderRoute: typeof DoneMomentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/talk/$moment': {
+      id: '/talk/$moment'
+      path: '/talk/$moment'
+      fullPath: '/talk/$moment'
+      preLoaderRoute: typeof TalkMomentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PracticeRoute: PracticeRoute,
+  WordsRoute: WordsRoute,
+  DoneMomentRoute: DoneMomentRoute,
+  TalkMomentRoute: TalkMomentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
