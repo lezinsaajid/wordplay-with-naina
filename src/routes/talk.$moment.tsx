@@ -190,7 +190,7 @@ function Talk() {
         </p>
 
         <div className="relative mt-10 grid size-[220px] place-items-center">
-          {phase === "listening" || phase === "yourTurn" ? (
+          {micActive ? (
             <>
               <span
                 aria-hidden="true"
@@ -211,9 +211,7 @@ function Talk() {
           >
             <span
               className={`size-3 rounded-full ${
-                phase === "listening" || phase === "yourTurn"
-                  ? "bg-brand"
-                  : "bg-background/40"
+                micActive ? "bg-brand" : "bg-background/40"
               }`}
             />
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-background/70">
