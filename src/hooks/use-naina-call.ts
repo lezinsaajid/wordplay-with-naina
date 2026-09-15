@@ -67,7 +67,7 @@ function friendlyError(e: unknown): string {
     : "Something dropped on my end. Try tapping again.";
 }
 
-export function useNainaCall({ context, onEnded }: Options = {}) {
+export function useNainaCall({ context, firstMessage, onEnded }: Options = {}) {
   const [status, setStatus] = useState<CallStatus>("idle");
   const [error, setError] = useState<string | null>(null);
 
