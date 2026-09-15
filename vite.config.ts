@@ -12,4 +12,18 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    environments: {
+      client: {
+        resolve: {
+          alias: {
+            // The client build otherwise stubs Node's `events` to an empty object,
+            // which breaks `@vapi-ai/web` (its emitter class extends EventEmitter)
+            // with "superclass is not a constructor". Use the real browser shim.
+            events: "events/events.js",
+          },
+        },
+      },
+    },
+  },
 });
