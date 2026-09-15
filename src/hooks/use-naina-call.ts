@@ -4,6 +4,7 @@ import {
   isVapiConfigured,
   peekVapiClient,
   vapiAssistantId,
+  vapiPublicKey,
 } from "@/lib/vapi";
 
 export type CallStatus =
