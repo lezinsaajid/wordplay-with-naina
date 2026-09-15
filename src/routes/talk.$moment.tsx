@@ -71,9 +71,12 @@ function Talk() {
 
   const call = useNainaCall({
     context: {
+      topic: moment?.id ?? "everyday",
       moment: moment?.label ?? "Everyday",
       scenario: moment?.scenario ?? "",
     },
+    // The topic is already chosen, so Naina opens on it instead of asking again.
+    firstMessage: openerFor(moment),
     onEnded: () => {
       navigate({ to: "/done/$moment", params: { moment: momentId } });
     },
