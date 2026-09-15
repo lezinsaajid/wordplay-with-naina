@@ -168,10 +168,4 @@ WordPlay is an exploration of that idea.
 
 ## Live Prototype
 
-**[Add your deployed WordPlay URL here]**
-
-## Author
-
-**Lezin Sajid**
-
-Computer Science graduate interested in building products at the intersection of technology, people, and communication.
+https://wordplay-with-naina.lovable.app
