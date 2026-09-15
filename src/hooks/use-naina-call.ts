@@ -147,8 +147,8 @@ export function useNainaCall({ context, firstMessage, onEnded }: Options = {}) {
     setStatus("connecting");
     if (!isVapiConfigured) {
       console.error("[vapi] missing config", {
-        VITE_VAPI_PUBLIC_KEY: Boolean(vapiPublicKey),
-        VITE_VAPI_ASSISTANT_ID: Boolean(vapiAssistantId),
+        publicKey: Boolean(vapiPublicKey),
+        assistantId: Boolean(vapiAssistantId),
       });
       setError("Naina isn't connected yet — the voice keys are missing in this build.");
       setStatus("error");

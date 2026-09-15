@@ -1,12 +1,13 @@
 import type VapiClient from "@vapi-ai/web";
 
 /**
- * Vapi client for Naina. Credentials come from environment variables
- * (VITE_VAPI_PUBLIC_KEY / VITE_VAPI_ASSISTANT_ID) — never from components.
- * The public key and assistant id are browser-safe, publishable values.
+ * Vapi client for Naina. The public key and assistant id are browser-safe,
+ * publishable values (like a Stripe publishable key) — they are embedded in
+ * the client bundle by design, so they live in source rather than in a
+ * committed .env file or server-side secrets.
  */
-export const vapiPublicKey: string = import.meta.env["VITE_VAPI_PUBLIC_KEY"] ?? "";
-export const vapiAssistantId: string = import.meta.env["VITE_VAPI_ASSISTANT_ID"] ?? "";
+export const vapiPublicKey: string = "b44e0f30-45eb-439c-860c-cde970c8234a";
+export const vapiAssistantId: string = "bc4a3a6a-62f9-46d3-83dd-4e09245e0ae2";
 
 export const isVapiConfigured = Boolean(vapiPublicKey && vapiAssistantId);
 
@@ -21,9 +22,9 @@ let loading: Promise<VapiClient | null> | null = null;
 export async function getVapiClient(): Promise<VapiClient | null> {
   if (typeof window === "undefined") return null;
   if (!isVapiConfigured) {
-    console.error("[vapi] missing env vars", {
-      VITE_VAPI_PUBLIC_KEY: Boolean(vapiPublicKey),
-      VITE_VAPI_ASSISTANT_ID: Boolean(vapiAssistantId),
+    console.error("[vapi] missing config", {
+      publicKey: Boolean(vapiPublicKey),
+      assistantId: Boolean(vapiAssistantId),
     });
     return null;
   }
