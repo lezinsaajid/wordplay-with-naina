@@ -140,12 +140,26 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
   const start = useCallback(async () => {
     setError(null);
     setStatus("connecting");
+    if (!isVapiConfigured) {
+      console.error("[vapi] missing config", {
+        VITE_VAPI_PUBLIC_KEY: Boolean(vapiPublicKey),
+        VITE_VAPI_ASSISTANT_ID: Boolean(vapiAssistantId),
+      });
+      setError("Naina isn't connected yet — the voice keys are missing in this build.");
+      setStatus("error");
+      return;
+    }
     try {
       // Ask for the mic up front so a denial reads as a friendly line, not a crash.
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch {
+      const probe = await navigator.mediaDevices.getUserMedia({ audio: true });
+      probe.getTracks().forEach((t) => t.stop());
+    } catch (e) {
+      logVapi("microphone blocked", e);
+      const inFrame = typeof window !== "undefined" && window.self !== window.top;
       setError(
-        "I can't hear you — your browser blocked the microphone. Allow mic access and try again.",
+        inFrame
+          ? "I can't hear you — the preview frame is blocking the microphone. Open the app in its own tab and allow mic access."
+          : "I can't hear you — your browser blocked the microphone. Allow mic access and try again.",
       );
       setStatus("error");
       return;
@@ -158,10 +172,19 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
         return;
       }
       const ctx = contextRef.current;
-      const call = ctx && Object.keys(ctx).length
-        ? await vapi.start(vapiAssistantId, { variableValues: ctx })
-        : await vapi.start(vapiAssistantId);
-      console.info("[vapi] call started", call);
+      let call: unknown;
+      try {
+        call =
+          ctx && Object.keys(ctx).length
+            ? await vapi.start(vapiAssistantId, { variableValues: ctx })
+            : await vapi.start(vapiAssistantId);
+      } catch (overrideErr) {
+        // Assistant overrides can be rejected; retry with the bare assistant id.
+        logVapi("start with overrides failed, retrying bare", overrideErr);
+        call = await vapi.start(vapiAssistantId);
+      }
+      activeRef.current = true;
+      console.info("[vapi] start() resolved", call);
     } catch (e) {
       logVapi("start failed", e);
       setError(friendlyError(e));
@@ -170,6 +193,7 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
   }, []);
 
   const stop = useCallback(() => {
+    activeRef.current = false;
     peekVapiClient()?.stop();
   }, []);
 
