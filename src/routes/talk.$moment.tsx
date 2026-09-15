@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { getMoment, soundLikeModes } from "@/lib/wordplay";
+import { getMoment, openerFor, soundLikeModes } from "@/lib/wordplay";
 import { useNainaCall } from "@/hooks/use-naina-call";
 
 export const Route = createFileRoute("/talk/$moment")({
@@ -71,9 +71,12 @@ function Talk() {
 
   const call = useNainaCall({
     context: {
+      topic: moment?.id ?? "everyday",
       moment: moment?.label ?? "Everyday",
       scenario: moment?.scenario ?? "",
     },
+    // The topic is already chosen, so Naina opens on it instead of asking again.
+    firstMessage: openerFor(moment),
     onEnded: () => {
       navigate({ to: "/done/$moment", params: { moment: momentId } });
     },
