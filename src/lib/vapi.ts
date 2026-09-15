@@ -30,13 +30,20 @@ export async function getVapiClient(): Promise<VapiClient | null> {
   if (client) return client;
   if (!loading) {
     loading = import("@vapi-ai/web")
-      .then(({ default: Vapi }) => {
-        if (typeof Vapi !== "function") {
+      .then((mod) => {
+        // The SDK is published as CommonJS: depending on how the bundler wraps it,
+        // the constructor lands on `default`, `default.default`, or `Vapi`.
+        const ns = mod as unknown as Record<string, unknown>;
+        const nested = (ns["default"] as Record<string, unknown> | undefined)?.["default"];
+        const Ctor = [ns["default"], nested, ns["Vapi"]].find(
+          (v) => typeof v === "function",
+        ) as (new (key: string) => VapiClient) | undefined;
+        if (!Ctor) {
           throw new TypeError(
-            `Vapi SDK default export is ${typeof Vapi}, expected a constructor`,
+            `Vapi SDK export is not a constructor (keys: ${Object.keys(ns).join(",")})`,
           );
         }
-        client = new Vapi(vapiPublicKey);
+        client = new Ctor(vapiPublicKey);
         return client;
       })
       .catch((e: unknown) => {
