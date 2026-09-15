@@ -22,7 +22,17 @@ export async function getVapiClient(): Promise<VapiClient | null> {
   if (client) return client;
   if (!loading) {
     loading = import("@vapi-ai/web").then((mod) => {
-      client = new mod.default(vapiPublicKey);
+      // The SDK ships CJS/ESM interop variants; resolve whichever export is the class.
+      const candidate = mod as unknown as {
+        default?: unknown;
+        Vapi?: unknown;
+      };
+      const nested = (candidate.default as { default?: unknown } | undefined)?.default;
+      const Ctor = [nested, candidate.default, candidate.Vapi].find(
+        (v) => typeof v === "function",
+      ) as (new (key: string) => VapiClient) | undefined;
+      if (!Ctor) throw new Error("Vapi SDK failed to load");
+      client = new Ctor(vapiPublicKey);
       return client;
     });
   }
