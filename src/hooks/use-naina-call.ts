@@ -65,6 +65,7 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
     const onSpeechStart = () => setStatus((s) => (s === "ended" ? s : "speaking"));
     const onSpeechEnd = () => setStatus((s) => (s === "ended" ? s : "listening"));
     const onError = (e: unknown) => {
+      logVapi("error event", e);
       setError(friendlyError(e));
       setStatus("error");
     };
