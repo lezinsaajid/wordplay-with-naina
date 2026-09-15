@@ -83,10 +83,14 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
 
 
     const onCallStart = () => {
+      console.info("[vapi] call-start");
+      activeRef.current = true;
       setError(null);
       setStatus("listening");
     };
     const onCallEnd = () => {
+      console.info("[vapi] call-end");
+      activeRef.current = false;
       setStatus("ended");
       endedRef.current?.();
     };
@@ -94,8 +98,15 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
     const onSpeechEnd = () => setStatus((s) => (s === "ended" ? s : "listening"));
     const onError = (e: unknown) => {
       logVapi("error event", e);
+      activeRef.current = false;
       setError(friendlyError(e));
       setStatus("error");
+    };
+    const onMessage = (m: unknown) => {
+      const type = (m as { type?: string })?.type;
+      if (type === "status-update" || type === "end-of-call-report") {
+        console.info("[vapi] message", m);
+      }
     };
 
     void getVapiClient().then((vapi) => {
@@ -105,19 +116,24 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
       vapi.on("speech-start", onSpeechStart);
       vapi.on("speech-end", onSpeechEnd);
       vapi.on("error", onError);
+      vapi.on("message", onMessage);
       detach = () => {
         vapi.off("call-start", onCallStart);
         vapi.off("call-end", onCallEnd);
         vapi.off("speech-start", onSpeechStart);
         vapi.off("speech-end", onSpeechEnd);
         vapi.off("error", onError);
+        vapi.off("message", onMessage);
       };
     });
 
     return () => {
       disposed = true;
       detach?.();
-      peekVapiClient()?.stop();
+      if (activeRef.current) {
+        activeRef.current = false;
+        peekVapiClient()?.stop();
+      }
     };
   }, []);
 
