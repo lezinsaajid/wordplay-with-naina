@@ -13,16 +13,12 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    environments: {
-      client: {
-        resolve: {
-          alias: {
-            // The client build otherwise stubs Node's `events` to an empty object,
-            // which breaks `@vapi-ai/web` (its emitter class extends EventEmitter)
-            // with "superclass is not a constructor". Use the real browser shim.
-            events: "events/events.js",
-          },
-        },
+    resolve: {
+      alias: {
+        // Without this the browser build stubs Node's `events` to an empty object,
+        // so `@vapi-ai/web` (whose emitter class extends EventEmitter) dies with
+        // "superclass is not a constructor". Use the real browser shim instead.
+        events: "events/events.js",
       },
     },
   },
