@@ -1,249 +1,177 @@
-# Talk & Grow
+# WordPlay
 
-Build a polished, modern web app called WordPlay.
+### You already know more words than you use.
 
-WordPlay is a voice-first vocabulary and communication coach. It helps people improve their active vocabulary through natural conversations rather than flashcards or traditional English lessons.
+WordPlay is a voice-first communication coach that helps people discover better words **through real conversation** rather than traditional vocabulary exercises.
 
-The voice coach is called Naina.
+Instead of memorising random words, you talk to **Naina**, a conversational voice coach who listens to how you express yourself, notices moments where a more precise or confident word could help, and gets you to use it immediately.
 
-IMPORTANT PRODUCT FEEL:
+**Talk. Get unstuck. Find the word.**
 
-This should feel like a real consumer product, not an AI SaaS dashboard, language-learning classroom, or generic chatbot.
+---
 
-The personality should be:
+## Why WordPlay?
 
-warm
+Most vocabulary apps start with the word.
 
-friendly
+WordPlay starts with **you**.
 
-playful
+People often know more vocabulary than they actually use. The problem isn't always learning another word — it's being able to reach for the right one when you're speaking.
 
-modern
+WordPlay turns vocabulary practice into a natural conversation.
 
-approachable
+---
 
-slightly witty
+## How it works
 
-youthful but not childish
+### 1. Choose a situation
 
-The visual design should feel editorial, minimal, premium, and human.
+Start with a conversation around:
 
-Avoid:
+* **Work**
+* **Confidence**
+* **Travel**
+* **Networking**
+* **Everyday**
+* **Surprise Me**
 
-generic AI gradients
+Each choice gives Naina a different conversational context.
 
-excessive glassmorphism
+### 2. Talk naturally
 
-corporate blue dashboards
+Naina starts a voice conversation instead of presenting a lesson or vocabulary list.
 
-lots of cards
+The goal is simple: **keep talking.**
 
-stock illustrations
+### 3. Discover better words
 
-robot/AI imagery
+When Naina notices an opportunity, she introduces a useful word based on what you were actually trying to say.
 
-excessive animations
+For example:
 
-complicated navigation
+> "I was really nervous about the presentation."
 
-Use plenty of whitespace, strong typography, rounded buttons, subtle borders, and a clean visual hierarchy.
+Naina might introduce:
 
-APP STRUCTURE
+**apprehensive**
 
-Create these main screens:
+Rather than simply defining the word, she asks you to use it yourself.
 
-HOME
+### 4. Make it yours
 
-At the top:
+WordPlay also includes **Make me sound like...**
 
-WordPlay
+* More natural
+* More confident
+* More professional
+* More persuasive
 
-Main headline:
+The idea isn't to rewrite what you said for you.
 
-"You know more words than you think."
+It's to help you say it better **yourself**.
 
-Subheadline:
+### 5. See what you picked up
 
-"Let's get you to actually use them."
+At the end of a conversation, WordPlay gives you a lightweight recap of the words you encountered and how naturally you used them.
 
-Primary CTA:
+---
 
-"Start talking"
+## Meet Naina
 
-Include a small label beneath it:
+Naina is the voice behind WordPlay.
 
-"4 min · Voice only"
+She's designed to feel less like an English teacher and more like **that friend who's really good with words**.
 
-Then a section:
+No lectures.
+No vocabulary tests.
+No unnecessary corrections.
 
-"What do you feel like practising?"
+Just conversation, with better words showing up when you actually need them.
 
-Create six selectable topic pills/buttons:
+---
 
-Work
-Confidence
-Travel
-Networking
-Everyday
-Surprise me
+## Product principles
 
-Below that, show a small "Your last session" section.
+WordPlay was designed around a few simple principles:
 
-Example:
+**Conversation before vocabulary.**
+Start with something worth talking about.
 
-Your last session
-
-3 words · 4 min
-
-articulate
-nuanced
-proactive
-
-Keep this section visually subtle.
-
-TOPIC SELECTION / PRE-CALL STATE
-
-When the user selects a topic, show a simple transition into the conversation.
-
-Example:
-
-"Alright, let's do this."
-
-Show the selected topic.
-
-Give a short scenario, such as:
-
-"You've just joined a new team and you're explaining an idea to your manager."
-
-Then show a large primary button:
-
-"Talk to Naina"
-
-VOICE CONVERSATION SCREEN
-
-This is the most important screen.
-
-Make it extremely simple.
-
-Large central circular microphone button.
-
-Above it:
-
-"Naina"
-
-Small status text:
-
-"Listening..."
-
-or
-
-"Your turn"
-
-Show a very subtle visual indication when Naina is speaking/listening.
-
-Do NOT create a traditional chat interface with message bubbles.
-
-This is voice-first.
-
-Include a small exit button.
-
-Also show a small progress indicator such as:
-
-"2 of 3 words"
-
-but keep it understated.
-
-SESSION COMPLETE
-
-After the conversation, show:
-
-"Nice. You actually used those."
-
-Then:
-
-"Today's words"
-
-Display three words:
-
-ARTICULATE
-NUANCED
-PROACTIVE
-
-For each, show a tiny status such as:
-
-Used naturally
-Getting there
-Used naturally
-
-Then show:
-
-"One thing I noticed"
-
-Example:
-
-"You explain ideas naturally. Your next upgrade is replacing general words like 'good' and 'nice' with more precise ones."
-
-Primary button:
-
-"Another round"
-
-Secondary option:
-
-"Back home"
-
-INTERACTION
-
-Make the app feel responsive.
-
-Buttons should have subtle hover and press states.
-
-Topic selection should visibly activate when selected.
-
-The Start Talking button should eventually be the entry point for the real Naina voice agent.
-
-For now, create the frontend interaction and placeholder voice state. Do not use fake chat messages.
-
-TECHNICAL
-
-Use React with TypeScript.
-
-Keep the code clean and componentized.
-
-Make the experience responsive for desktop and mobile.
-
-Use a modern sans-serif font.
-
-Use accessible buttons and semantic HTML.
-
-Do not add authentication, databases, payments, analytics, or unnecessary backend infrastructure.
-
-This is a focused prototype.
-
-The priority is:
-
-beautiful UX + clear product concept + realistic voice interaction flow.
-
-Do not add features that were not requested.
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://wordplay-with-naina.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/0caf073f-4efb-4c6c-9b7d-cc09c3fe5fc5).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+**Context before memorisation.**
+A word is more useful when you discover it in a situation that matters to you.
+
+**Use, don't just learn.**
+Every new word should have a chance to become part of your vocabulary.
+
+**Communication over test scores.**
+The goal isn't to sound like a dictionary. It's to express yourself better.
+
+**Human before AI.**
+The experience should feel like talking to someone, not operating an AI tool.
+
+---
+
+## Tech Stack
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* Vapi Web SDK
+* Vapi Voice AI
+
+The prototype was designed and developed with **Lovable**, with Vapi powering the real-time voice interaction.
+
+---
+
+## Prototype Flow
+
+```text
+Home
+  ↓
+Choose a conversation
+  ↓
+Naina
+  ↓
+Real-time voice conversation
+  ↓
+Discover & use new words
+  ↓
+Session recap
+  ↓
+Your words
 ```
+
+---
+
+## Current Prototype
+
+This is a working product prototype rather than a production-scale application.
+
+The current version focuses on validating the core interaction:
+
+**Choose a context → talk → discover a better word → use it → reflect.**
+
+Long-term features such as authentication, persistent vocabulary history, analytics, and personalised progress tracking are intentionally outside the scope of this prototype.
+
+---
+
+## Built for
+
+A simple question:
+
+> **What if vocabulary learning started with the words you actually need?**
+
+WordPlay is an exploration of that idea.
+
+---
+
+## Live Prototype
+
+**[Add your deployed WordPlay URL here]**
+
+## Author
+
+**Lezin Sajid**
+
+Computer Science graduate interested in building products at the intersection of technology, people, and communication.
