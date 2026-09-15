@@ -19,14 +19,13 @@ const eventsShim = require.resolve("events/events.js");
 const eventsForBrowser = {
   name: "events-browser-shim",
   enforce: "pre" as const,
-  resolveId(id: string) {
+  resolveId(this: { environment?: { name?: string } }, id: string) {
     if ((id === "events" || id === "node:events") && this.environment?.name === "client") {
       return eventsShim;
     }
     return null;
   },
 };
-
 
 export default defineConfig({
   tanstackStart: {
@@ -35,13 +34,6 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    resolve: {
-      alias: {
-        // Without this the browser build stubs Node's `events` to an empty object,
-        // so `@vapi-ai/web` (whose emitter class extends EventEmitter) dies with
-        // "superclass is not a constructor". Use the real browser shim instead.
-        events: "events/events.js",
-      },
-    },
+    plugins: [eventsForBrowser],
   },
 });
