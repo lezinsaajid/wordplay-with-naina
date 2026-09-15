@@ -18,6 +18,8 @@ export type CallStatus =
 type Options = {
   /** Extra context handed to Naina at call start (e.g. the chosen moment). */
   context?: Record<string, string>;
+  /** Naina's opening line for this call, replacing her default first message. */
+  firstMessage?: string;
   onEnded?: () => void;
 };
 
