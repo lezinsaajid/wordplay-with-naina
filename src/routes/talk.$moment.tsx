@@ -68,7 +68,7 @@ function Talk() {
     return () => timers.current.forEach(clearTimeout);
   }, []);
 
-  const beat = beats[index];
+  const beat: Beat = beats[index] ?? beats[0]!;
 
   const handleMic = () => {
     if (phase === "ready") {
