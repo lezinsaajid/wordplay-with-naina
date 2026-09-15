@@ -29,15 +29,38 @@ function logVapi(label: string, e: unknown) {
   }
 }
 
+/** Pull whatever human-readable reason Vapi/Daily attached to the failure. */
+function errorReason(e: unknown): string {
+  if (!e) return "";
+  if (typeof e === "string") return e;
+  if (e instanceof Error) return e.message;
+  const o = e as Record<string, unknown>;
+  const nested = o["error"] as Record<string, unknown> | string | undefined;
+  const parts = [
+    o["message"],
+    o["errorMsg"],
+    o["msg"],
+    o["type"],
+    o["action"],
+    typeof nested === "string" ? nested : nested?.["message"] ?? nested?.["msg"],
+  ]
+    .filter((v) => typeof v === "string" && v)
+    .map(String);
+  if (parts.length) return [...new Set(parts)].join(" · ");
+  try {
+    return JSON.stringify(o);
+  } catch {
+    return String(o);
+  }
+}
+
 function friendlyError(e: unknown): string {
-  const raw =
-    e instanceof Error
-      ? e.message
-      : typeof e === "object" && e && "message" in e
-        ? String((e as { message: unknown }).message)
-        : "";
-  return /permission|denied|notallowed|microphone/i.test(raw)
-    ? "I can't hear you — your browser blocked the microphone. Allow mic access and try again."
+  const raw = errorReason(e);
+  if (/permission|denied|notallowed|microphone|audio/i.test(raw)) {
+    return "I can't hear you — your browser blocked the microphone. Allow mic access and try again.";
+  }
+  return raw
+    ? `Something dropped on my end. (${raw.slice(0, 160)}) Try tapping again.`
     : "Something dropped on my end. Try tapping again.";
 }
 
