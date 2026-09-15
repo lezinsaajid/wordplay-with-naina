@@ -46,7 +46,7 @@ const beats: Beat[] = [
   },
 ];
 
-/** Prototype voice states. A real Vapi session would drive these instead. */
+/** Local states used when Naina isn't connected (prototype walkthrough). */
 type Phase = "ready" | "listening" | "thinking" | "naina" | "yourTurn" | "nice";
 
 function Talk() {
@@ -68,9 +68,29 @@ function Talk() {
     return () => timers.current.forEach(clearTimeout);
   }, []);
 
+  const call = useNainaCall({
+    context: {
+      moment: moment?.label ?? "Everyday",
+      scenario: moment?.scenario ?? "",
+    },
+    onEnded: () => {
+      navigate({ to: "/done/$moment", params: { moment: momentId } });
+    },
+  });
+
+  const live = call.available;
+
   const beat: Beat = beats[index] ?? beats[0]!;
 
   const handleMic = () => {
+    if (live) {
+      if (call.status === "listening" || call.status === "speaking") {
+        call.stop();
+      } else if (call.status !== "connecting") {
+        void call.start();
+      }
+      return;
+    }
     if (phase === "ready") {
       setPhase("listening");
       return;
@@ -98,8 +118,22 @@ function Talk() {
     }
   };
 
-  const status: string =
-    phase === "ready"
+  const liveStatus: string =
+    call.status === "connecting"
+      ? "Connecting…"
+      : call.status === "listening"
+        ? "Listening"
+        : call.status === "speaking"
+          ? "Naina's turn"
+          : call.status === "error"
+            ? "Couldn't start"
+            : call.status === "ended"
+              ? "That's a wrap"
+              : "Tap to talk";
+
+  const status: string = live
+    ? liveStatus
+    : phase === "ready"
       ? "Tap when you're ready"
       : phase === "listening"
         ? "Listening"
@@ -111,14 +145,25 @@ function Talk() {
               ? "Your turn"
               : "That sounded natural";
 
-  const micLabel =
-    phase === "listening"
+  const micLabel = live
+    ? call.status === "listening" || call.status === "speaking"
+      ? "End conversation"
+      : call.status === "connecting"
+        ? "Connecting…"
+        : "Talk to Naina"
+    : phase === "listening"
       ? "Stop talking"
       : phase === "yourTurn"
         ? "Say it out loud"
         : "Talk to Naina";
 
-  const micDisabled = phase === "thinking" || phase === "naina" || phase === "nice";
+  const micDisabled = live
+    ? call.status === "connecting"
+    : phase === "thinking" || phase === "naina" || phase === "nice";
+
+  const micActive = live
+    ? call.status === "listening" || call.status === "speaking"
+    : phase === "listening" || phase === "yourTurn";
 
   return (
     <main className="flex min-h-screen flex-col bg-paper-deep">
