@@ -20,6 +20,15 @@ type Options = {
   onEnded?: () => void;
 };
 
+function logVapi(label: string, e: unknown) {
+  try {
+    const anyE = e as Record<string, unknown> | null;
+    console.error(`[vapi] ${label}`, e, anyE ? JSON.stringify(anyE, Object.getOwnPropertyNames(anyE ?? {})) : "");
+  } catch {
+    console.error(`[vapi] ${label}`, e);
+  }
+}
+
 function friendlyError(e: unknown): string {
   const raw =
     e instanceof Error
