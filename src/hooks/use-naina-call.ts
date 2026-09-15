@@ -113,10 +113,13 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
         setStatus("error");
         return;
       }
-      await vapi.start(vapiAssistantId, {
-        variableValues: contextRef.current ?? {},
-      });
+      const ctx = contextRef.current;
+      const call = ctx && Object.keys(ctx).length
+        ? await vapi.start(vapiAssistantId, { variableValues: ctx })
+        : await vapi.start(vapiAssistantId);
+      console.info("[vapi] call started", call);
     } catch (e) {
+      logVapi("start failed", e);
       setError(friendlyError(e));
       setStatus("error");
     }
