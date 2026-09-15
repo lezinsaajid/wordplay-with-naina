@@ -221,13 +221,31 @@ function Talk() {
         </div>
 
         <div className="mt-10 min-h-[190px] w-full max-w-[46ch]">
-          {phase === "naina" && beat.kind === "open" ? (
+          {live && call.error ? (
+            <p className="rise font-display text-[clamp(1.2rem,2.6vw,1.6rem)] italic leading-snug text-brand">
+              {call.error}
+            </p>
+          ) : null}
+
+          {live && !call.error && call.status === "idle" ? (
+            <p className="font-display text-[clamp(1.3rem,2.8vw,1.75rem)] italic leading-snug">
+              Okay, tell me. What&rsquo;s on your mind?
+            </p>
+          ) : null}
+
+          {live && call.status === "connecting" ? (
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              Getting Naina on the line…
+            </p>
+          ) : null}
+
+          {!live && phase === "naina" && beat.kind === "open" ? (
             <p className="rise font-display text-[clamp(1.4rem,3vw,1.9rem)] italic leading-snug">
               &ldquo;{beat.naina}&rdquo;
             </p>
           ) : null}
 
-          {phase === "naina" && beat.kind === "notice" ? (
+          {!live && phase === "naina" && beat.kind === "notice" ? (
             <div className="rise space-y-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand">
                 Naina noticed something
@@ -251,7 +269,7 @@ function Talk() {
             </div>
           ) : null}
 
-          {phase === "naina" && beat.kind === "mode" ? (
+          {!live && phase === "naina" && beat.kind === "mode" ? (
             <div className="rise space-y-5">
               <p className="font-display text-[clamp(1.3rem,2.8vw,1.75rem)] italic leading-snug">
                 &ldquo;{beat.naina}&rdquo;
@@ -282,19 +300,19 @@ function Talk() {
             </div>
           ) : null}
 
-          {phase === "yourTurn" ? (
+          {!live && phase === "yourTurn" ? (
             <p className="rise font-display text-[clamp(1.3rem,2.8vw,1.75rem)] italic leading-snug">
               Say it your way. I&rsquo;m listening.
             </p>
           ) : null}
 
-          {phase === "nice" ? (
+          {!live && phase === "nice" ? (
             <p className="rise font-display text-[clamp(1.4rem,3vw,1.9rem)] font-semibold tracking-tight">
               That sounded natural.
             </p>
           ) : null}
 
-          {phase === "thinking" ? (
+          {!live && phase === "thinking" ? (
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
               Finding your next word…
             </p>
