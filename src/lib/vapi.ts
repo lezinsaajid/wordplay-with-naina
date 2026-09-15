@@ -1,4 +1,4 @@
-import Vapi from "@vapi-ai/web";
+import type VapiClient from "@vapi-ai/web";
 
 /**
  * Vapi client for Naina. Credentials come from environment variables
@@ -10,11 +10,26 @@ export const vapiAssistantId: string = import.meta.env["VITE_VAPI_ASSISTANT_ID"]
 
 export const isVapiConfigured = Boolean(vapiPublicKey && vapiAssistantId);
 
-let client: Vapi | null = null;
+let client: VapiClient | null = null;
+let loading: Promise<VapiClient | null> | null = null;
 
-/** Lazily create a single browser-side Vapi instance. Returns null on the server. */
-export function getVapiClient(): Vapi | null {
+/**
+ * Lazily create a single browser-side Vapi instance.
+ * The SDK is browser-only, so it's imported dynamically after hydration.
+ */
+export async function getVapiClient(): Promise<VapiClient | null> {
   if (typeof window === "undefined" || !isVapiConfigured) return null;
-  if (!client) client = new Vapi(vapiPublicKey);
+  if (client) return client;
+  if (!loading) {
+    loading = import("@vapi-ai/web").then((mod) => {
+      client = new mod.default(vapiPublicKey);
+      return client;
+    });
+  }
+  return loading;
+}
+
+/** Already-created instance, if any (safe for cleanup paths). */
+export function peekVapiClient(): VapiClient | null {
   return client;
 }
