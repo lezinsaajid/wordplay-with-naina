@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { getMoment, soundLikeModes } from "@/lib/wordplay";
+import { useNainaCall } from "@/hooks/use-naina-call";
 
 export const Route = createFileRoute("/talk/$moment")({
   head: () => ({
@@ -46,7 +47,7 @@ const beats: Beat[] = [
   },
 ];
 
-/** Prototype voice states. A real Vapi session would drive these instead. */
+/** Local states used when Naina isn't connected (prototype walkthrough). */
 type Phase = "ready" | "listening" | "thinking" | "naina" | "yourTurn" | "nice";
 
 function Talk() {
@@ -68,9 +69,29 @@ function Talk() {
     return () => timers.current.forEach(clearTimeout);
   }, []);
 
+  const call = useNainaCall({
+    context: {
+      moment: moment?.label ?? "Everyday",
+      scenario: moment?.scenario ?? "",
+    },
+    onEnded: () => {
+      navigate({ to: "/done/$moment", params: { moment: momentId } });
+    },
+  });
+
+  const live = call.available;
+
   const beat: Beat = beats[index] ?? beats[0]!;
 
   const handleMic = () => {
+    if (live) {
+      if (call.status === "listening" || call.status === "speaking") {
+        call.stop();
+      } else if (call.status !== "connecting") {
+        void call.start();
+      }
+      return;
+    }
     if (phase === "ready") {
       setPhase("listening");
       return;
@@ -98,8 +119,22 @@ function Talk() {
     }
   };
 
-  const status: string =
-    phase === "ready"
+  const liveStatus: string =
+    call.status === "connecting"
+      ? "Connecting…"
+      : call.status === "listening"
+        ? "Listening"
+        : call.status === "speaking"
+          ? "Naina's turn"
+          : call.status === "error"
+            ? "Couldn't start"
+            : call.status === "ended"
+              ? "That's a wrap"
+              : "Tap to talk";
+
+  const status: string = live
+    ? liveStatus
+    : phase === "ready"
       ? "Tap when you're ready"
       : phase === "listening"
         ? "Listening"
@@ -111,14 +146,25 @@ function Talk() {
               ? "Your turn"
               : "That sounded natural";
 
-  const micLabel =
-    phase === "listening"
+  const micLabel = live
+    ? call.status === "listening" || call.status === "speaking"
+      ? "End conversation"
+      : call.status === "connecting"
+        ? "Connecting…"
+        : "Talk to Naina"
+    : phase === "listening"
       ? "Stop talking"
       : phase === "yourTurn"
         ? "Say it out loud"
         : "Talk to Naina";
 
-  const micDisabled = phase === "thinking" || phase === "naina" || phase === "nice";
+  const micDisabled = live
+    ? call.status === "connecting"
+    : phase === "thinking" || phase === "naina" || phase === "nice";
+
+  const micActive = live
+    ? call.status === "listening" || call.status === "speaking"
+    : phase === "listening" || phase === "yourTurn";
 
   return (
     <main className="flex min-h-screen flex-col bg-paper-deep">
@@ -144,7 +190,7 @@ function Talk() {
         </p>
 
         <div className="relative mt-10 grid size-[220px] place-items-center">
-          {phase === "listening" || phase === "yourTurn" ? (
+          {micActive ? (
             <>
               <span
                 aria-hidden="true"
@@ -165,9 +211,7 @@ function Talk() {
           >
             <span
               className={`size-3 rounded-full ${
-                phase === "listening" || phase === "yourTurn"
-                  ? "bg-brand"
-                  : "bg-background/40"
+                micActive ? "bg-brand" : "bg-background/40"
               }`}
             />
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-background/70">
@@ -177,13 +221,31 @@ function Talk() {
         </div>
 
         <div className="mt-10 min-h-[190px] w-full max-w-[46ch]">
-          {phase === "naina" && beat.kind === "open" ? (
+          {live && call.error ? (
+            <p className="rise font-display text-[clamp(1.2rem,2.6vw,1.6rem)] italic leading-snug text-brand">
+              {call.error}
+            </p>
+          ) : null}
+
+          {live && !call.error && call.status === "idle" ? (
+            <p className="font-display text-[clamp(1.3rem,2.8vw,1.75rem)] italic leading-snug">
+              Okay, tell me. What&rsquo;s on your mind?
+            </p>
+          ) : null}
+
+          {live && call.status === "connecting" ? (
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              Getting Naina on the line…
+            </p>
+          ) : null}
+
+          {!live && phase === "naina" && beat.kind === "open" ? (
             <p className="rise font-display text-[clamp(1.4rem,3vw,1.9rem)] italic leading-snug">
               &ldquo;{beat.naina}&rdquo;
             </p>
           ) : null}
 
-          {phase === "naina" && beat.kind === "notice" ? (
+          {!live && phase === "naina" && beat.kind === "notice" ? (
             <div className="rise space-y-4">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brand">
                 Naina noticed something
@@ -207,7 +269,7 @@ function Talk() {
             </div>
           ) : null}
 
-          {phase === "naina" && beat.kind === "mode" ? (
+          {!live && phase === "naina" && beat.kind === "mode" ? (
             <div className="rise space-y-5">
               <p className="font-display text-[clamp(1.3rem,2.8vw,1.75rem)] italic leading-snug">
                 &ldquo;{beat.naina}&rdquo;
@@ -238,19 +300,19 @@ function Talk() {
             </div>
           ) : null}
 
-          {phase === "yourTurn" ? (
+          {!live && phase === "yourTurn" ? (
             <p className="rise font-display text-[clamp(1.3rem,2.8vw,1.75rem)] italic leading-snug">
               Say it your way. I&rsquo;m listening.
             </p>
           ) : null}
 
-          {phase === "nice" ? (
+          {!live && phase === "nice" ? (
             <p className="rise font-display text-[clamp(1.4rem,3vw,1.9rem)] font-semibold tracking-tight">
               That sounded natural.
             </p>
           ) : null}
 
-          {phase === "thinking" ? (
+          {!live && phase === "thinking" ? (
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
               Finding your next word…
             </p>
