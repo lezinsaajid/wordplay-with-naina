@@ -73,9 +73,14 @@ export function useNainaCall({ context, onEnded }: Options = {}) {
   const contextRef = useRef(context);
   contextRef.current = context;
 
+  // True only between an accepted start() and the call ending, so React cleanup
+  // never stops a call that was never running.
+  const activeRef = useRef(false);
+
   useEffect(() => {
     let disposed = false;
     let detach: (() => void) | undefined;
+
 
     const onCallStart = () => {
       setError(null);
