@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { getMoment, soundLikeModes } from "@/lib/wordplay";
+import { getMoment, openerFor, soundLikeModes } from "@/lib/wordplay";
 import { useNainaCall } from "@/hooks/use-naina-call";
 
 export const Route = createFileRoute("/talk/$moment")({
