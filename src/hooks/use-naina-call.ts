@@ -177,12 +177,20 @@ export function useNainaCall({ context, firstMessage, onEnded }: Options = {}) {
         return;
       }
       const ctx = contextRef.current;
+      const opener = firstMessageRef.current?.trim();
+      // Dynamic variables ({{topic}}, {{scenario}}) plus a topic-specific opening
+      // line, so Naina never asks which topic the user already picked.
+      const overrides: Record<string, unknown> = {};
+      if (ctx && Object.keys(ctx).length) overrides["variableValues"] = ctx;
+      if (opener) {
+        overrides["firstMessage"] = opener;
+        overrides["firstMessageMode"] = "assistant-speaks-first";
+      }
       let call: unknown;
       try {
-        call =
-          ctx && Object.keys(ctx).length
-            ? await vapi.start(vapiAssistantId, { variableValues: ctx })
-            : await vapi.start(vapiAssistantId);
+        call = Object.keys(overrides).length
+          ? await vapi.start(vapiAssistantId, overrides)
+          : await vapi.start(vapiAssistantId);
       } catch (overrideErr) {
         // Assistant overrides can be rejected; retry with the bare assistant id.
         logVapi("start with overrides failed, retrying bare", overrideErr);
