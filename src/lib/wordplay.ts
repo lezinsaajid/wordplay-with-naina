@@ -11,6 +11,8 @@ export type Moment = {
   label: string;
   line: string;
   scenario: string;
+  /** Naina's opening line for this moment — replaces her generic topic question. */
+  opener: string;
 };
 
 export const moments: Moment[] = [
